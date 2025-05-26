@@ -100,29 +100,15 @@
 
 </head>
 
-<body>
+<body style="margin:0">
 
-    <div id="container">
-        <div id="stats"></div>
+    <div id="app">  
 
-        <button id="collapse_side" title="Collapse Side Menu">&larr;</button>
-        <button id="collapse_btm" title="Collapse Bottom Menu">&darr;</button>
-
-        <!--Side Menu Start-->
-        <div class="side_menu">
-            <ul class="menu_item">
-
-                <li id="header">
-                    <table style="width:100%">
-                        <tr>
-                            <th style="font-size: 15px;">Viewer Theme</th>
-                            <th style="font-size: 11px;"><button id="lightSkin">Light</button></th>
-                            <th style="font-size: 11px;"><button id="darkSkin">Dark</button></th>
-                        </tr>
-                    </table>
-                </li>
-
-                <li class='dropdown'>
+        <!-- ────────────────────  Minimalist Top Navbar  ──────────────────── -->
+        <nav id="top_nav">
+            <ul class="menu_item">  <!--   left-hand features   -->
+                    <!-- 1  Lighting  -->
+                    <li class='dropdown'>
                     <a href='#'><img src="images/dir_light_icon.png" class="image" /> Lighting</a>
                     <ul>
                         <li><span>Ambient Light</span></li>
@@ -154,9 +140,8 @@
                             <li><div id="point_light"></div></li>   
                     </ul>                   
                 </li>
-
-
-                <li class='dropdown'>
+                <!-- 2  Wireframe View   -->
+                <li class="dropdown">
                     <a href='#'><img src="images/wireframe_cube.png" class="image" />Wireframe View</a>
                     <ul>
                         <li><span>Wireframe</span></li>
@@ -175,80 +160,95 @@
                         </li>
                     </ul>
                 </li>
-
-                <li class='dropdown'>
-                    <a href='#'><img src="images/phong_icon.png" class="image" />Phong Shading</a>
-                    <ul>
-                        <li> <span>Phong Shading </span></li>
-
-                        <li>
-                            <label class="switch">
-                                <input class="check" type="checkbox" name="mod_phong" id="phong_check">
-                                <span class="toggle round"></span>
-                            </label>
-                        </li>
-
-                        <li><span style="font-size: 12px">Shininess</span></li>
-                        <li><div id="shine"></div></li>
-                    </ul>
+                <!-- 3 Display-Mode  -->
+                <li class="dropdown">
+                <a href="#"><img src="images/display.png" class="image" />Display Mode</a>
+                <ul>
+                    <li>
+                        <label><input type="radio" name="display_mode" value="solid"    checked> Solid</label>
+                    </li>
+                    <li>
+                        <label><input type="radio" name="display_mode" value="shaded"> Shaded</label>
+                    </li>
+                    <li>
+                        <label><input type="radio" name="display_mode" value="textured"> Textured</label>
+                    </li>
+                    <li>
+                        <label><input type="radio" name="display_mode" value="material"> Material</label>
+                    </li>
+                    <li>
+                        <label><input type="radio" name="display_mode" value="rendered"> Rendered</label>
+                    </li>
+                </ul>
                 </li>
 
-                <li class='dropdown'>
-                    <a href='#'><img src="images/XRay.png" class="image" />X-Ray Shading</a>
-                    <ul>
-                        <li> <span>X-Ray </span></li>
-                        <li>
-                            <label class="switch">
-                                <input class="check" type="checkbox" name="mod_xray" id="xray_check">
-                                <span class="toggle round"></span>
-                            </label>
+                <!-- 4 View Controls          -->
+                <li class="dropdown">
+                    <a href="#"><img src="images/scale.png" class="image" />View Controls</a>
+                    <ul class="vcPanel">
+                        <li style="margin:6px 0">
+                            <button class="vcBtn" id="vc_full">Full screen</button>
+                            <!-- <button class="vcBtn" id="vc_pan">Pan</button> -->
+                            <!-- <button class="vcBtn" id="vc_fit">Fit view</button> -->
                         </li>
-                    </ul>
-                </li>
-
-                <li class='dropdown'>
-                    <a href='#'><img src="images/glowing.png" width="32" height="32" class="image" />Glow Outline</a>
-                    <ul>
-                        <li> <span>Glow Outline</span></li>
-                        <li>
-                            <label class="switch">
-                                <input class="check" type="checkbox" name="mod_mat" id="glow_check">
-                                <span class="toggle round"></span>
-                            </label>
-                        </li>
-
-                        <li><span style="font-size: 12px">edgeStrength</span></li>
-                        <li><div id="edgeStrength"></div></li>
-
-                        <li> <span>Set Glow Colour</span></li>
-                        <li><input type='text' class="glow_select" /></li>
-                        <li><em id='basic-log'></em></li>
-                    </ul>
-                </li>
-
-                <li class='dropdown'>
-                    <a href='#'><img src="images/smoothed.png" width="32" height="32" class="image" />Smooth Model</a>
-                    <ul>
-                        <li> <span id="smooth-model" style="font-size:18px">Smooth Model</span></li>
-                        <li>
-                            <label class="switch">
-                                <input type="checkbox" id="smooth">
-                                <span class="toggle round"></span>
-                            </label>
+                        <li style="margin:6px 0">
+                            <button class="vcBtn" id="vc_zi">Zoom&nbsp;+</button>
+                            <button class="vcBtn" id="vc_zo">Zoom&nbsp;–</button>
+                            <button class="vcBtn" id="vc_reset">Reset</button>
                         </li>
                     </ul>
                 </li>
 
-                <li class='dropdown'>
-                    <a href='#'><img src="images/colour_pick.png" class="image" />Set Background</a>
-                    <ul>
-                        <li> <span>Set Background Colour</span></li>
-                        <li><input type='text' class="bg_select" /></li>
-                        <li><em id='basic_log'></em></li>
+                <!-- 5  Model View Helpers       -->
+                <li class="dropdown">
+                    <a href='#'><img src="images/grid.png" class="image" />Model View Helpers</a>
+                    <ul style="font-size: 13.5px">
+                        <li style="display:inline-block; margin:0 25px 0 0;">
+                            <span style="font-size:18px">Grid</span>
+                            <label class="switch helper">
+                                <input type="checkbox" id="grid">
+                                <span class="toggle grid round"></span>
+                            </label>
+                        </li>
+                        <li style="display:inline-block; margin:0 25px 0 0;">
+                            <span style="font-size:18px">Polar-grid</span>
+                            <label class="switch helper">
+                                <input type="checkbox" id="polar_grid">
+                                <span class="toggle grid round"></span>
+                            </label>
+                        </li>
+                        <li style="display:inline-block; margin:0 25px 0 0;">
+                            <span style="font-size:18px">Axis</span>
+                            <label class="switch helper">
+                                <input type="checkbox" id="axis">
+                                <span class="toggle grid round"></span>
+                            </label>
+                        </li>
+                        <li style="display:inline-block; margin:0 25px 0 0;">
+                            <span style="font-size:18px">Model Box</span>
+                            <label class="switch helper">
+                                <input type="checkbox" id="bBox">
+                                <span class="toggle grid round"></span>
+                            </label>
+                        </li>
                     </ul>
-                </li>
-
-                <li class='dropdown'>
+                </li> 
+                <!-- TODO:Cant seem to get this working -->
+                <!--  6  View-Mode picker  -->
+                <!-- <li class="dropdown">
+                <a href="#"><img src="images/camera.png" class="image" />View Mode</a>
+                <ul>
+                    <li><label><input type="radio" name="view_mode" value="perspective"  checked> Perspective</label></li>
+                    <li><label><input type="radio" name="view_mode" value="orthographic"> Orthographic</label></li>
+                    <li><label><input type="radio" name="view_mode" value="isometric">   Isometric</label></li>
+                    <li><label><input type="radio" name="view_mode" value="axonometric"> Axonometric</label></li>
+                    <li><label><input type="radio" name="view_mode" value="oblique">     Oblique</label></li>
+                    <li><label><input type="radio" name="view_mode" value="topdown">     Top-Down</label></li>
+                    <li><label><input type="radio" name="view_mode" value="firstperson"> First-Person</label></li>
+                </ul>
+                </li> -->
+                <!-- 7  Select / Drop Model File  -->
+                <li class="dropdown">
                     <a href='#'><img src="images/folder_icon.png" class="image" />Select/Drop Model File</a>
                     <ul>
                         <li style="background: #d9d9f2; color: black; text-align: center">Select from button or drag and drop model onto the viewer</li>
@@ -272,8 +272,7 @@
                         <li><output id="result" /></li>
                     </ul>
                 </li>
-            </ul>
-
+            </ul>    
             <div id="load_help" title="Loading Models">
                 <p>Locate the model file you wish to view. Textures/associated images of the model
                    are supported (.obj, .gltf, .fbx and .dae formats), make sure the images and model file are in the same folder
@@ -309,130 +308,34 @@
 
             <div id="disp_tmp_path"></div>
 
-        </div>
-        <!--Side Menu End-->
+            <div class="nav-utils">
+                    <span class="sampleMods label">Samples:&nbsp;</span>
 
-        <!--Bottom Menu Start-->
-        <div id="bottom_menu">
-            <ul class="bottom_menu_item">
-                <li class='dropdown'>
-                    <a href='#'><img src="images/rotation.png" class="image" />Model Rotation</a>
-                    <ul>
-                        <li style="display:inline-block;  margin:0 35px 0 0;"><span>Auto Rotate</span></li>
-                        <li style="display:inline-block">
-                            <span>Set Rotation Speed</span>
-                            <span id="rot_slider"></span>
-                        </li>
-                        <li>
-                            <label class="switch">
-                                <input type="checkbox" id="rotation">
-                                <span class="toggle round"></span>
-                            </label>
-                        </li>
-                        <li>Fix Rotation of Imported Models<hr style="margin-top:0px" /></li>
+                    <div class="sampleSelect">
+                        <select id="scenes_list" onchange="selectModel();">
+                            <option>Crash Model (165 KB)</option>
+                            <option>Bear Model (113 KB)</option>
+                            <option>Car Model (1.33 MB)</option>
+                            <option>Tiger Model (3.77 MB)</option>
+                            <option>Dinosaur Model (5.07 MB)</option>
+                            <option>Skeleton Model (5.52 MB)</option>
+                        </select>
+                    </div>
 
-                        <li>
-                            <div id="rotation">
-                                <div class="radioBtn">
-                                    <input type="radio" id="r1" name="rotate" value="rotateX"> Rotate X
-                                </div>  
-                                        
-                                <div class="radioBtn">
-                                    <input type="radio" id="r2" name="rotate" value="rotateY"> Rotate Y
-                                </div>  
-
-                                <div class="radioBtn">
-                                    <input type="radio" id="r3" name="rotate" value="rotateZ"> Rotate Z
-                                </div>                             
-                            </div>
-                        </li>
-
-                        <li><button class="resetRotateButton" type='reset' id="reset_rot">Reset</button></li>                     
-                    </ul>
-                </li>
-
-                <li class='dropdown'>
-                    <a href='#'><img src="images/scale.png" class="image" />Transform Model</a>
-                    <ul>
-                        <li style="margin-left:25px; font-size: 15px">
-                            <label for="transform">
-                                Attach Transform Controls:
-                                <label class="switch helper">
-                                    <input type="checkbox" id="transform">
-                                    <span class="toggle grid round"></span>
-                                </label>
-                            </label>
-                        </li>
-                        <li id="transformKey">Press S: (Scale), T: (Translate), R: (Rotate)</li>
-
-                        <li style="text-align:center; margin-top:8px;font-size: 15px">
-                            <span>Scale Up:</span> &nbsp;<button id="scale_up" style="margin:0 35px 0 0" type="button">+</button>
-                            <span>Scale Down:</span> &nbsp;<button id="scale_down" type="button">-</button>
-                        </li>
-                        
-                    </ul>
-                </li>
-
-                <li class='dropdown'>
-                    <a href='#'><img src="images/grid.png" class="image" />Model View Helpers</a>
-                    <ul style="font-size: 13.5px">
-                        <li style="display:inline-block; margin:0 25px 0 0;">
-                            <span style="font-size:18px">Grid</span>
-                            <label class="switch helper">
-                                <input type="checkbox" id="grid">
-                                <span class="toggle grid round"></span>
-                            </label>
-                        </li>
-                        <li style="display:inline-block; margin:0 25px 0 0;">
-                            <span style="font-size:18px">Polar-grid</span>
-                            <label class="switch helper">
-                                <input type="checkbox" id="polar_grid">
-                                <span class="toggle grid round"></span>
-                            </label>
-                        </li>
-                        <li style="display:inline-block; margin:0 25px 0 0;">
-                            <span style="font-size:18px">Axis</span>
-                            <label class="switch helper">
-                                <input type="checkbox" id="axis">
-                                <span class="toggle grid round"></span>
-                            </label>
-                        </li>
-                        <li style="display:inline-block; margin:0 25px 0 0;">
-                            <span style="font-size:18px">Model Box</span>
-                            <label class="switch helper">
-                                <input type="checkbox" id="bBox">
-                                <span class="toggle grid round"></span>
-                            </label>
-                        </li>
-                    </ul>
-                </li>
-            </ul>           
-        </div>
-        <!--Bottom Menu End-->
-
-        <div id="main_viewer"></div>
-
-        <div id="fullscreen">
-            <button id="fullscreenBtn" title="Fullscreen Mode" style="border: 0; float:right; background: transparent">
-                <img src="images/fullscreen.png" width="32" height="32" alt="fullscreen" />
-            </button>
-        </div>
-
-        <div id="sampleMods">
-            Sample Models
-            <br />
-            <div class="select">
-                <select id="scenes_list" onchange="selectModel();">
-                    <option>Crash Model (165 KB)</option>
-                    <option>Bear Model (113 KB)</option>
-                    <option>Car Model (1.33 MB)</option>
-                    <option>Tiger Model (3.77 MB)</option>
-                    <option>Dinosaur Model (5.07 MB)</option>
-                    <option>Skeleton Model (5.52 MB)</option>
-                </select>
-                <br /><br />
             </div>
-        </div>
+
+
+
+
+        </nav>
+        <!-- ────────────────────────────────────────────────────────────────── -->
+
+
+        <main id="main_viewer"></main>
+
+
+
+    </div>
 
        <div id="anims">   
             <span>Select Animation</span>
@@ -451,7 +354,7 @@
         <script src="js/main.js"></script>
         <script src="js/userModelTextures.js"></script>
         <script src="js/userModel.js"></script>     
-    </div>
+     
 
     <script src="js/ColourTheme.js"></script>
 

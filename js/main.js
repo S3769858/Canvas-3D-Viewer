@@ -1,4 +1,16 @@
-var container = document.getElementById('container');
+// --- tiny helper for defunct check-boxes ---------------------------
+const el = document.getElementById('something');
+function safeUncheck(el){
+    if (el && typeof el.checked !== "undefined"){ el.checked = false; }
+}
+
+var smoothModelLabel = document.getElementById('smooth-model');   // may be null
+var shineSlider      = $('#shine');                               // may be empty
+
+
+// var container = document.getElementById('container');
+// var container = document.getElementById('main_viewer');
+var container = document.getElementById('app');
 var view = document.getElementById('main_viewer');
 
 if (!Detector.webgl) Detector.addGetWebGLMessage();
@@ -34,7 +46,13 @@ var transform = document.getElementById('transform');
 var smooth = document.getElementById('smooth');
 var outline = document.getElementById('outline');
 
-var statsNode = document.getElementById('stats');
+var panBtn = document.getElementById('vc_pan');             // Pan toggle
+var displayRadios = document.querySelectorAll('input[name="display_mode"]');
+
+
+const statsNode = document.getElementById('stats') || { innerHTML:'' };
+
+
 
 //ANIMATION GLOBALS
 var animations = {}, animationsSelect = document.getElementById("animationSelect"),
@@ -43,6 +61,9 @@ animsDiv = document.getElementById("anims"), mixer, currentAnimation, actions = 
 //X-RAY SHADER MATERIAL
 //http://free-tutorials.org/shader-x-ray-effect-with-three-js/
 var materials = {
+    solidMaterial  : new THREE.MeshLambertMaterial({ color:0x888888, side:THREE.DoubleSide }),
+    shadedMaterial : new THREE.MeshPhongMaterial  ({ color:0x666666, shininess:30, side:THREE.DoubleSide }),
+    renderedMaterial: new THREE.MeshStandardMaterial({ color:0x888888, metalness:0.3, roughness:0.6, side:THREE.DoubleSide }),
     default_material: new THREE.MeshLambertMaterial({ side: THREE.DoubleSide }),
     default_material2: new THREE.MeshLambertMaterial({ side: THREE.DoubleSide }),
     wireframeMaterial: new THREE.MeshPhongMaterial({
@@ -68,6 +89,7 @@ var materials = {
         side: THREE.DoubleSide, blending: THREE.AdditiveBlending,
         transparent: true, depthWrite: false
     })
+    
 };
 
 var clock = new THREE.Clock();
@@ -80,6 +102,80 @@ function onload() {
     animate();
 }
 
+/* ------------------------------------------------------------------
+   VIEW-CONTROL HELPERS  
+--------------------------------------------------------------------*/
+
+/* Full-screen simply clicks the existing icon */
+function vc_fullscreen(){
+    if ( !THREEx.FullScreen.activated() ) {
+        THREEx.FullScreen.request( container ); 
+    } else {
+        THREEx.FullScreen.cancel(); 
+    }
+}
+
+/* Fit the current object tightly inside the frustum */
+/* — Fit view (scale-aware) — */
+function vc_fit(){
+  const obj =  (modelLoaded && model) || (sample_model_loaded && sample_model);
+  if(!obj || !camera) return;
+
+  /* radius AFTER current scaling — not the original geometry */
+  const box = new THREE.Box3().setFromObject(obj);
+  const size = box.getSize(new THREE.Vector3()).length();
+  const centre = box.getCenter(new THREE.Vector3());
+
+  /* how far the camera must be so the whole diagonal fits */
+  const halfFovY = THREE.Math.degToRad(camera.fov * 0.5);
+  const dist     = (size * 0.5) / Math.tan(halfFovY); // 0.5 = radius
+
+  camera.position.copy(centre).add(new THREE.Vector3(0,0,dist));
+  controls.target.copy(centre);
+  controls.update();
+}
+
+
+/* manual dolly that works in every OrbitControls build */
+function vc_dolly(factor){
+    const offset = new THREE.Vector3()
+        .subVectors( camera.position, controls.target )
+        .multiplyScalar( factor );
+
+    camera.position.copy( controls.target ).add( offset );
+    controls.update();
+}
+function vc_zoomIn (){ vc_dolly(0.8 ); }   // 20 % closer
+function vc_zoomOut(){ vc_dolly(1.25); }   // 25 % farther
+
+/* Reset to original pose */
+const _homePos = new THREE.Vector3(0,0,20);
+function vc_reset(){
+    camera.position.copy(_homePos);
+    camera.up.set(0,1,0);
+    controls.target.set(0,0,0);
+    controls.update();
+}
+
+/* attach the handlers once DOM is ready */
+document.addEventListener('DOMContentLoaded',()=>{
+    document.getElementById('vc_full') .addEventListener('click', vc_fullscreen);
+    const fitBtn = document.getElementById('vc_fit');
+    if (fitBtn) fitBtn.addEventListener('click', vc_fit);
+    document.getElementById('vc_zi')   .addEventListener('click', vc_zoomIn);
+    document.getElementById('vc_zo')   .addEventListener('click', vc_zoomOut);
+    document.getElementById('vc_reset').addEventListener('click', vc_reset);
+    if (panBtn){
+    panBtn.addEventListener('click', ()=>{
+        controls.enablePan = !controls.enablePan;
+        panBtn.textContent = controls.enablePan ? 'Pan ON' : 'Pan OFF';
+    });
+    panBtn.textContent = 'Pan OFF';          // start disabled
+}
+    
+});
+
+
 function initScene(index) {
 
     scene = new THREE.Scene();
@@ -88,13 +184,28 @@ function initScene(index) {
     camera.position.set(0, 0, 20);
 
     //Setup renderer
-    //renderer = new THREE.CanvasRenderer({ alpha: true });
-    renderer = new THREE.WebGLRenderer();
-    renderer.setPixelRatio(window.devicePixelRatio);
-    renderer.setSize(window.innerWidth, window.innerHeight)
-    renderer.setClearColor(0x292121); //565646, 29212
+    renderer = new THREE.WebGLRenderer({ antialias:true });
+    renderer.setClearColor(0x292121);
 
+    const view = document.getElementById('main_viewer');
     view.appendChild(renderer.domElement);
+
+
+
+
+    // 3 helper
+    function resizeRenderer(){
+        renderer.setPixelRatio(window.devicePixelRatio); 
+        const w = view.clientWidth;
+        const h = view.clientHeight || 300;   // fallback for 0-height if hidden
+        renderer.setSize(w, h, false);
+        camera.aspect = w / h;
+        camera.updateProjectionMatrix();
+    }
+     resizeRenderer();
+         // 2  listen for any size change (window or flex parent)
+    window.addEventListener('resize', resizeRenderer, false);
+
 
     THREEx.WindowResize(renderer, camera);
 
@@ -122,9 +233,9 @@ function initScene(index) {
         }
     }
 
-    document.getElementById('fullscreenBtn').addEventListener('click', function () {
-        toggleFullscreen();
-    });
+
+    const fsBtn = document.getElementById('fullscreenBtn');
+    if (fsBtn) fsBtn.addEventListener('click', () => toggleFullscreen());
   
     ambient = new THREE.AmbientLight(0x404040);
     $('#ambient_light').change(function () {
@@ -233,11 +344,13 @@ function initScene(index) {
         if (data.lengthComputable) { //if size of file transfer is known
             var percentage = Math.round((data.loaded * 100) / data.total);
             console.log(percentage);
-            statsNode.innerHTML = 'Loaded : ' + percentage + '%' + ' of ' + sceneInfo.name
+            if (statsNode) {
+                statsNode.innerHTML = 'Loaded : ' + percentage + '%' + ' of ' + sceneInfo.name
             + '<br>'
             + '<progress value="0" max="100" class="progress"></progress>';
             $('.progress').css({ 'width': percentage + '%' });
-            $('.progress').val(percentage);
+            $('.progress').val(percentage);;
+            }       
         }
     }
     var onError = function (xhr) {
@@ -313,6 +426,9 @@ function initScene(index) {
     });
 }
 
+
+
+
 function removeModel() {
 
     scene.remove(model);
@@ -336,21 +452,23 @@ function removeModel() {
 
     $("#red, #green, #blue, #ambient_red, #ambient_green, #ambient_blue").slider("value", 127); //Reset colour sliders
 
-    amb.checked = false; rot1.checked = false; wire.checked = false;
-    model_wire.checked = false; phong.checked = false; xray.checked = false;
-    glow.checked = false; grid.checked = false; polar_grid.checked = false;
-    axis.checked = false; bBox.checked = false; smooth.checked = false; 
-    transform.checked = false, smooth.disabled = false; //Uncheck any checked boxes
+    safeUncheck(amb);           safeUncheck(rot1);        safeUncheck(wire);
+    safeUncheck(model_wire);    safeUncheck(phong);       safeUncheck(xray);
+    safeUncheck(glow);          safeUncheck(grid);        safeUncheck(polar_grid);
+    safeUncheck(axis);          safeUncheck(bBox);        safeUncheck(smooth);
+    safeUncheck(transform);
     
     transformControls.detach(scene);
 
-    document.getElementById('smooth-model').innerHTML = "Smooth Model";
+    if (smoothModelLabel)
+    smoothModelLabel.innerHTML = "Smooth Model";
 
     $('#rot_slider').slider({
         disabled: true //disable the rotation slider
     });
     controls.autoRotate = false; //Stop model auto rotating if doing so on new file select
-    $('#shine').slider("value", 10); //Set phong shine level back to initial
+    if (shineSlider.length && shineSlider.hasClass('ui-slider'))
+    shineSlider.slider("value", 10); //Set phong shine level back to initial
 
     $('input[name="rotate"]').prop('checked', false); //uncheck rotate x, y or z checkboxes
     
@@ -418,6 +536,26 @@ function setColours() {
 
 }
 
+function setDisplayMode (mode){
+    const root = (modelLoaded && model) || (sample_model_loaded && sample_model);
+    if (!root) return;
+
+    root.traverse(child=>{
+        if (!(child instanceof THREE.Mesh)) return;
+
+        switch(mode){
+            case 'solid':     child.material = materials.solidMaterial;     break;
+            case 'shaded':    child.material = materials.shadedMaterial;    break;
+            case 'textured':  /* keep whatever the loader gave us */        break;
+            case 'material':  child.material = materials.phongMaterial;     break;
+            case 'rendered':  child.material = materials.renderedMaterial;  break;
+        }
+        child.material.needsUpdate = true;
+    });
+    render();
+}
+
+
 function getColours(r, g, b) {
 
     var colour = [r.valueOf() / 255, g.valueOf() / 255, b.valueOf() / 255];
@@ -429,6 +567,13 @@ function render() {
     setColours();
    // renderer.render(scene, camera);
 }
+
+displayRadios.forEach(r=>{
+    r.addEventListener('change', e=>{
+        if (e.target.checked) setDisplayMode(e.target.value);
+    });
+});
+
 
 function animate() {
 
@@ -497,3 +642,20 @@ function clear() {
 }
 
 onload();
+
+
+document.querySelectorAll('#top_nav .dropdown > a').forEach(a=>{
+  a.addEventListener('click',e=>{
+     e.preventDefault();
+     const p=a.nextElementSibling;
+     p.classList.toggle('hidden');
+     // close others
+     document.querySelectorAll('.panel:not(.hidden)').forEach(o=>{
+        if(o!==p) o.classList.add('hidden');
+     });
+  });
+});
+document.addEventListener('click',e=>{
+  if(!e.target.closest('.dropdown')) document
+      .querySelectorAll('.panel').forEach(p=>p.classList.add('hidden'));
+});

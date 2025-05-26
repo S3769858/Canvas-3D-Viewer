@@ -1,4 +1,5 @@
-const express = require('express')
+const express = require('express');
+const req = require('express/lib/request');
 const fs = require('fs')
 const app = express()
 const http = require('http');
@@ -26,6 +27,39 @@ app.get('/xml', (req, res) => {
 app.get('/models', (req, res) => {
   const models = fs.readdirSync('./sample_models');
   res.send(models);
+})
+
+app.post('/select/:modelName', (req, res) => {
+  const modelName = req.params.modelName;
+  const formData = new FormData();
+
+  formData.append('lti_message_type', 'ContentItemSelection');
+  formData.append('lti_version', 'LTI-1p0');
+  formData.append('content_items', '{'
+    +' "@context": "http://purl.imsglobal.org/ctx/lti/v1/ContentItem",'
+    +' "@graph": [ {'
+    +' "@type": "LtiLinkItem",'
+    //+' "url": "http://localhost:5000/' + modelName + '",'
+    +' "url": "http://localhost:5000/",'
+    +' "mediaType": "application/vnd.ims.lti.v1.ltilink",'
+    +' "text": "3D Model Viewer",'
+    +' "placementAdvice": {'
+    +' "presentationDocumentTarget": "iframe",'
+    +' "displayWidth": 800,'
+    +' "displayHeight": 600'
+    +' } } ]'
+    +' }'
+  )
+
+  try {
+    const response = fetch("http://localhost:8080/courses/5/external_content/success/external_tool_dialog", {
+      method: "POST",
+      // Set the FormData instance as the request body
+      body: formData,
+    });
+  } catch (e) {
+    console.error(e);
+  }
 })
 
 var httpServer = http.createServer(app);

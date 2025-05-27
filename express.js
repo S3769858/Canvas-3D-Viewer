@@ -52,7 +52,7 @@ app.post('/select/:modelName', (req, res) => {
   )
 
   try {
-    const response = fetch("http://172.18.0.6:8080/courses/5/external_content/success/external_tool_dialog", {
+    const response = fetch("http://172.18.0.6:80/courses/5/external_content/success/external_tool_dialog", {
       method: "POST",
       // Set the FormData instance as the request body
       body: formData,

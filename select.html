@@ -6,7 +6,7 @@
     <title>Selection</title>
 </head>
 <body>
-    <form id="selectModelForm">
+    <form action="http://localhost:8080/courses/5/external_content/success/external_tool_dialog" id="selectModelForm">
         <input id="modelsInput" list="models">
         <datalist id="models"></datalist>
         <button onclick="sendData()"></button>
@@ -57,6 +57,8 @@
             +' } } ]'
             +' }'
         )
+
+        console.log(formData);
 
         try {
             const response = fetch("http://localhost:8080/courses/5/external_content/success/external_tool_dialog", {

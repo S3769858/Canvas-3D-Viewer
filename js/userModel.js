@@ -129,7 +129,8 @@ var loadFile = function (file) {
             outlinePass.selectedObjects = [selectedObject];
             outlinePass.enabled = false;
 
-            scene.add(model);             
+            scene.add(model);     
+            showUserInDropdown( filename );        
 
         }, false );
         reader.readAsText( file );
@@ -204,6 +205,7 @@ var loadFile = function (file) {
                 outlinePass.enabled = false;
 
                 scene.add(model);
+                showUserInDropdown( filename );
 
             }, false);
 
@@ -265,6 +267,7 @@ var loadFile = function (file) {
                 outlinePass.enabled = false;
 
                 scene.add(model);
+                showUserInDropdown( filename );
 
             }, false);
             reader.readAsText(file);
@@ -347,6 +350,7 @@ var loadFile = function (file) {
                 outlinePass.enabled = false;
 
                 scene.add(model);
+                showUserInDropdown( filename );
 
             }, false);
             reader.readAsArrayBuffer(file);
@@ -430,6 +434,7 @@ var loadFile = function (file) {
                     outlinePass.enabled = false;
 
                     scene.add(model);
+                    showUserInDropdown( filename );
 
                 }, onError);
 

@@ -95,10 +95,49 @@ var materials = {
 var clock = new THREE.Clock();
 var winDims = [window.innerWidth * 0.8, window.innerHeight * 0.89]; //size of renderer
 
+/* ───────── URL → sample-index helper ───────── */
+
+function getRequestedModel() {
+  const url   = new URL(window.location.href);
+
+  /* 1️ explicit query strings */
+  if (url.searchParams.has('idx'))   return { kind:'index', val:url.searchParams.get('idx') };
+  if (url.searchParams.has('model')) return { kind:'name',  val:url.searchParams.get('model') };
+
+  /* 2️ bare paths like /tiger or /car.obj */
+  const path = url.pathname.replace(/^\/+|\/+$/g,'');          // strip /
+  if (path && path !== 'index.html') {
+      const base = path.split('.')[0];                         // ditch .obj/.html/…
+      return { kind:'name', val:base };
+  }
+  return null;
+}
+
+function findModelIndex(req){
+  if(!req) return -1;
+
+  /* numeric idx passed? */
+  if(req.kind === 'index' && /^\d+$/.test(req.val)){
+      const n = +req.val;
+      return (n>=0 && n < modelList.length) ? n : -1;
+  }
+
+  /* match id **or** filename stem */
+  const canon = req.val.toLowerCase();
+  return modelList.findIndex(m=>
+          (m.id   && m.id.toLowerCase()   === canon) ||
+          (m.name && m.name.toLowerCase() === canon) ||
+          (m.name && m.name.split('.')[0].toLowerCase() === canon)
+  );
+}
+
+
 function onload() {
 
     //window.addEventListener('resize', onWindowResize, false);
-    switchScene(0);
+    // switchScene(0);
+    const wanted = findModelIndex( getRequestedModel() );
+    switchScene( wanted !== -1 ? wanted : 0 );
     animate();
 }
 
@@ -178,6 +217,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 
 function initScene(index) {
 
+    manager.setURLModifier(null); 
     scene = new THREE.Scene();
 
     camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 500000);
@@ -590,26 +630,12 @@ function animate() {
 
 }
 var modelList = [
-            {
-                name: "crash.obj", url: 'sample_models/crash2.obj'
-            },
-            {
-                name: "bear.obj", url: 'sample_models/bear-obj.obj'
-            },
-            {
-                name: "car.obj", url: 'sample_models/car2.obj'
-                //, objectRotation: new THREE.Euler(0, 3 * Math.PI / 2, 0)
-                        
-            },
-            {
-                name: "tiger.obj", url: 'sample_models/Tiger.obj'
-            },
-            {
-                name: "dinosaur.obj", url: 'sample_models/Dinosaur_V02.obj'
-            },
-            {
-                name: "skeleton.obj", url: 'sample_models/skeleton.obj'
-            }
+    { id:"crash",    name:"Crash Model",    url:"sample_models/crash2.obj"         },
+    { id:"bear",     name:"Bear Model",     url:"sample_models/bear-obj.obj"       },
+    { id:"car",      name:"Car Model",      url:"sample_models/car2.obj"           },
+    { id:"tiger",    name:"Tiger Model",    url:"sample_models/Tiger.obj"          },
+    { id:"dinosaur", name:"Dinosaur Model", url:"sample_models/Dinosaur_V02.obj"   },
+    { id:"skeleton", name:"Skeleton Model", url:"sample_models/skeleton.obj"       }
 ];
 
 function switchScene(index) {
@@ -659,3 +685,20 @@ document.addEventListener('click',e=>{
   if(!e.target.closest('.dropdown')) document
       .querySelectorAll('.panel').forEach(p=>p.classList.add('hidden'));
 });
+
+function showUserInDropdown(label){
+    const select = document.getElementById('scenes_list');
+
+    /* remove the previous user entry (if any) */
+    [...select.options].forEach(o=>{
+        if(o.dataset.user) select.removeChild(o);
+    });
+
+    /* add the new one at the end */
+    const opt = document.createElement('option');
+    opt.textContent = label + '  (User)';
+    opt.dataset.user = '1';          // mark it so we can spot it later
+    select.appendChild(opt);
+    select.selectedIndex = select.options.length-1;
+}
+

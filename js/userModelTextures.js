@@ -171,6 +171,7 @@ var loadFiles = function (files) {
             outlinePass.enabled = false;
 
             scene.add(model);
+            showUserInDropdown( obj_path || dae_path || gltf_path || fbx_path );
         });
        
     }
@@ -245,6 +246,7 @@ var loadFiles = function (files) {
             outlinePass.enabled = false;
 
             scene.add(model);
+            showUserInDropdown( obj_path || dae_path || gltf_path || fbx_path );
         });
     }
     
@@ -321,6 +323,7 @@ var loadFiles = function (files) {
             outlinePass.enabled = false;
 
             scene.add(model);
+            showUserInDropdown( obj_path || dae_path || gltf_path || fbx_path );
         });
     }
 
@@ -381,6 +384,7 @@ var loadFiles = function (files) {
                 outlinePass.enabled = false;
 
                 scene.add(model);
+                showUserInDropdown( obj_path || dae_path || gltf_path || fbx_path );
             });
         });
     }

@@ -1,4 +1,5 @@
-const express = require('express')
+const express = require('express');
+const req = require('express/lib/request');
 const fs = require('fs')
 const app = express()
 const http = require('http');
@@ -10,8 +11,15 @@ app.use(express.static("./"))
 
 app.use(express.urlencoded({extended: true}))
 
+app.engine('html', require('ejs').renderFile);
+
 app.post('/', (req, res) => {
   res.sendFile(__dirname + '/index.html');
+})
+
+app.post('/:modelName', (req, res) => {
+  const modelName = req.params.modelName;
+  res.render(__dirname + '/index.html', { modelName: modelName })
 })
 
 app.post('/embed', (req, res) => {
@@ -26,6 +34,11 @@ app.get('/xml', (req, res) => {
 app.get('/models', (req, res) => {
   const models = fs.readdirSync('./sample_models');
   res.send(models);
+})
+
+app.post('/submit/:modelName', (req, res) => {
+  const modelName = req.params.modelName;
+  res.render(__dirname + '/submit.html', { modelName: modelName })
 })
 
 var httpServer = http.createServer(app);

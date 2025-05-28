@@ -17,6 +17,11 @@ app.post('/', (req, res) => {
   res.sendFile(__dirname + '/index.html');
 })
 
+app.post('/:modelName', (req, res) => {
+  const modelName = req.params.modelName;
+  res.render(__dirname + '/index.html', { modelName: modelName })
+})
+
 app.post('/embed', (req, res) => {
   console.log(req.body);
   res.sendFile(__dirname + '/select.html');
@@ -33,7 +38,6 @@ app.get('/models', (req, res) => {
 
 app.post('/submit/:modelName', (req, res) => {
   const modelName = req.params.modelName;
-  console.log(modelName);
   res.render(__dirname + '/submit.html', { modelName: modelName })
 })
 

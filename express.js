@@ -11,6 +11,8 @@ app.use(express.static("./"))
 
 app.use(express.urlencoded({extended: true}))
 
+app.engine('html', require('ejs').renderFile);
+
 app.post('/', (req, res) => {
   res.sendFile(__dirname + '/index.html');
 })

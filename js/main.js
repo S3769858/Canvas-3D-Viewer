@@ -100,11 +100,11 @@ var winDims = [window.innerWidth * 0.8, window.innerHeight * 0.89]; //size of re
 function getRequestedModel() {
   const url   = new URL(window.location.href);
 
-  /* 1️ explicit query strings */
+  /* explicit query strings */
   if (url.searchParams.has('idx'))   return { kind:'index', val:url.searchParams.get('idx') };
   if (url.searchParams.has('model')) return { kind:'name',  val:url.searchParams.get('model') };
 
-  /* 2️ bare paths like /tiger or /car.obj */
+  /* bare paths like /tiger or /car.obj */
   const path = url.pathname.replace(/^\/+|\/+$/g,'');          // strip /
   if (path && path !== 'index.html') {
       const base = path.split('.')[0];                         // ditch .obj/.html/…

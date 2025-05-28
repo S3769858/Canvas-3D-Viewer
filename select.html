@@ -6,15 +6,10 @@
     <title>Selection</title>
 </head>
 <body>
-    <form action="http://localhost:8080/courses/5/external_content/success/external_tool_dialog" id="selectModelForm">
+    <form id="selectModelForm">
         <input id="modelsInput" list="models">
         <datalist id="models"></datalist>
-        <button onclick="sendData()">Send Data</button>
-    </form>
-    <form action="http://localhost:8080/courses/5/external_content/success/external_tool_dialog" id="submitLTI" method="post" encType="application/x-www-form-urlencoded">
-        <input type="hidden" name="lti_message_type" value="ContentItemSelection" />
-        <input type="hidden" name="lti_version" value="LTI-1p0" />
-        <input type="hidden" name="content_items" value="{ &quot;@context&quot;: &quot;http://purl.imsglobal.org/ctx/lti/v1/ContentItem&quot;, &quot;@graph&quot;: [ { &quot;@type&quot;: &quot;LtiLinkItem&quot;, &quot;url&quot;: &quot;http://localhost:5000/&quot;, &quot;mediaType&quot;: &quot;application/vnd.ims.lti.v1.ltilink&quot;, &quot;text&quot;: &quot;3D Model Viewer&quot;, &quot;placementAdvice&quot;: { &quot;presentationDocumentTarget&quot;: &quot;iframe&quot;, &quot;displayWidth&quot;: 800, &quot;displayHeight&quot;: 600 } } ] }" />
+        <input type="button" onclick="mySubmitFunction()" value="Submit">
     </form>
 </body>
 <script>
@@ -34,40 +29,15 @@
             console.error(error.message);
         }
     }
-
     window.onload = getData();
 
-    async function sendData(params) {
-        const formData = new FormData();
-
-        formData.append('lti_message_type', 'ContentItemSelection');
-        formData.append('lti_version', 'LTI-1p0');
-        formData.append('content_items', '{'
-            +' "@context": "http://purl.imsglobal.org/ctx/lti/v1/ContentItem",'
-            +' "@graph": [ {'
-            +' "@type": "LtiLinkItem",'
-            //+' "url": "http://localhost:5000/' + modelName + '",'
-            +' "url": "http://localhost:5000/",'
-            +' "mediaType": "application/vnd.ims.lti.v1.ltilink",'
-            +' "text": "3D Model Viewer",'
-            +' "placementAdvice": {'
-            +' "presentationDocumentTarget": "iframe",'
-            +' "displayWidth": 800,'
-            +' "displayHeight": 600'
-            +' } } ]'
-            +' }'
-        )
-
-        try {
-            const response = await fetch("http://localhost:8080/courses/5/external_content/success/external_tool_dialog", {
-            method: "POST",
-            // Set the FormData instance as the request body
-            body: formData,
-            });
-            console.log(response);
-        } catch (e) {
-            console.error(e);
-        }
+    function mySubmitFunction() {
+        var myForm = document.getElementById("selectModelForm");     // Get form element
+        var myInput = document.getElementById("modelsInput");   // Get input element
+        var inputValue = myInput.value;                     // Get input value
+        myForm.action = "submit/" + inputValue + "";         // Action path
+        window.location = myForm.action;                    // Remove trailing question mark
+        myForm.submit();                                    // Submit the form
     }
 </script>
 </html>

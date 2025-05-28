@@ -33,6 +33,7 @@ app.get('/models', (req, res) => {
 
 app.post('/submit/:modelName', (req, res) => {
   const modelName = req.params.modelName;
+  console.log(modelName);
   res.render(__dirname + '/submit.html', { modelName: modelName })
 })
 

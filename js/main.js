@@ -105,11 +105,13 @@ function getRequestedModel() {
   if (url.searchParams.has('model')) return { kind:'name',  val:url.searchParams.get('model') };
 
   /* bare paths like /tiger or /car.obj */
-  const path = url.pathname.replace(/^\/+|\/+$/g,'');          // strip /
-  if (path && path !== 'index.html') {
-      const base = path.split('.')[0];                         // ditch .obj/.html/…
-      return { kind:'name', val:base };
-  }
+    const path = url.pathname.replace(/^\/+|\/+$/g,'');   
+    if (path && path !== 'index.html') {
+        const parts = path.split('/');                    // 'view','bear'
+        const last  = parts[parts.length - 1];            // 'bear'
+        const base  = last.split('.')[0];                 // drop .obj / .html
+        return { kind:'name', val: base };
+    }
   return null;
 }
 

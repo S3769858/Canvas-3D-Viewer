@@ -15,6 +15,7 @@ app.engine('html', require('ejs').renderFile);
 
 app.post('/view/:modelName', (req, res) => {
   const modelName = req.params.modelName;
+  console.log("view:" + modelName);
   res.render(__dirname + '/index.html', { modelName: modelName })
 })
 
@@ -33,6 +34,7 @@ app.get('/models', (req, res) => {
 
 app.post('/submit/:modelName', (req, res) => {
   const modelName = req.params.modelName;
+  console.log("submit:" + modelName);
   res.render(__dirname + '/submit.html', { modelName: modelName })
 })
 

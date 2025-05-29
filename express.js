@@ -13,17 +13,17 @@ app.use(express.urlencoded({extended: true}))
 
 app.engine('html', require('ejs').renderFile);
 
-app.post('/:modelName', (req, res) => {
+app.post('/view/:modelName', (req, res) => {
   const modelName = req.params.modelName;
   res.render(__dirname + '/index.html', { modelName: modelName })
 })
 
 app.post('/embed', (req, res) => {
-  res.sendFile(__dirname + '/select.html');
+  res.render(__dirname + '/select.html');
 })
 
 app.get('/xml', (req, res) => {
-  res.sendFile(__dirname + "/info.xml");
+  res.render(__dirname + "/info.xml");
 })
 
 app.get('/models', (req, res) => {

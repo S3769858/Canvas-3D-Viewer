@@ -20,6 +20,8 @@ app.post('/view/:modelName', (req, res) => {
 })
 
 app.post('/embed', (req, res) => {
+  const url = req.body;
+  console.log(url);
   res.render(__dirname + '/select.html');
 })
 

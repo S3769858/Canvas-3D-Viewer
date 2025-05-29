@@ -13,10 +13,6 @@ app.use(express.urlencoded({extended: true}))
 
 app.engine('html', require('ejs').renderFile);
 
-app.post('/', (req, res) => {
-  res.sendFile(__dirname + '/index.html');
-})
-
 app.post('/:modelName', (req, res) => {
   const modelName = req.params.modelName;
   res.render(__dirname + '/index.html', { modelName: modelName })

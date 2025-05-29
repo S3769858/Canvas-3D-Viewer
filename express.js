@@ -58,6 +58,11 @@ app.get('/submit/:modelName/:url', (req, res) => {
              { modelName, return_url: url });
 });
 
+app.all('/submit/:modelName', (req, res) => {
+  const name = req.params.modelName.replace(/\.[^/.]+$/, '').toLowerCase();
+  res.redirect('/view/' + name);
+});
+
 
 var httpServer = http.createServer(app);
 var httpsServer = https.createServer({

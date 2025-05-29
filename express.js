@@ -13,13 +13,12 @@ app.use(express.urlencoded({extended: true}))
 
 app.engine('html', require('ejs').renderFile);
 
-app.post('/:modelName', (req, res) => {
-  const modelName = req.params.modelName;
-  res.render(__dirname + '/index.html', { modelName: modelName })
-})
+//app.post('/:modelName', (req, res) => {
+//  const modelName = req.params.modelName;
+//  res.render(__dirname + '/index.html', { modelName: modelName })
+//})
 
 app.post('/embed', (req, res) => {
-  console.log(req.body);
   res.sendFile(__dirname + '/select.html');
 })
 

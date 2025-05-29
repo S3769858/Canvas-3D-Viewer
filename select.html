@@ -35,7 +35,7 @@
         var myForm = document.getElementById("selectModelForm");     // Get form element
         var myInput = document.getElementById("modelsInput");   // Get input element
         var inputValue = myInput.value;                     // Get input value
-        myForm.action = "submit/" + inputValue + "";         // Action path
+        myForm.action = "submit/" + inputValue + "/" + return_url;         // Action path
         window.location = myForm.action;                    // Remove trailing question mark
         myForm.submit();                                    // Submit the form
     }

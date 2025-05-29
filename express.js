@@ -21,8 +21,7 @@ app.post('/view/:modelName', (req, res) => {
 
 app.post('/embed', (req, res) => {
   const url = req.body.ext_content_return_url;
-  console.log(url);
-  res.render(__dirname + '/select.html');
+  res.render(__dirname + '/select.html', { return_url: url });
 })
 
 app.get('/xml', (req, res) => {
@@ -34,10 +33,11 @@ app.get('/models', (req, res) => {
   res.send(models);
 })
 
-app.post('/submit/:modelName', (req, res) => {
+app.post('/submit/:modelName/:url', (req, res) => {
   const modelName = req.params.modelName;
+  const url = req.params.url;
   console.log("submit:" + modelName);
-  res.render(__dirname + '/submit.html', { modelName: modelName })
+  res.render(__dirname + '/submit.html', { modelName: modelName, return_url: url })
 })
 
 var httpServer = http.createServer(app);

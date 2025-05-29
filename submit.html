@@ -6,7 +6,7 @@
     <title>Submit</title>
 </head>
 <body>
-    <form action="http://localhost:8080/courses/5/external_content/success/external_tool_dialog" id="submitLTI" method="post" encType="application/x-www-form-urlencoded">
+    <form action="<%return_url%>" id="submitLTI" method="post" encType="application/x-www-form-urlencoded">
         <input type="hidden" name="lti_message_type" value="ContentItemSelection" />
         <input type="hidden" name="lti_version" value="LTI-1p0" />
         <input type="hidden" name="content_items" value="{ &quot;@context&quot;: &quot;http://purl.imsglobal.org/ctx/lti/v1/ContentItem&quot;, &quot;@graph&quot;: [ { &quot;@type&quot;: &quot;LtiLinkItem&quot;, &quot;url&quot;: &quot;http://localhost:5000/view/<% modelName %>&quot;, &quot;mediaType&quot;: &quot;application/vnd.ims.lti.v1.ltilink&quot;, &quot;text&quot;: &quot;3D Model Viewer&quot;, &quot;placementAdvice&quot;: { &quot;presentationDocumentTarget&quot;: &quot;iframe&quot;, &quot;displayWidth&quot;: 800, &quot;displayHeight&quot;: 600 } } ] }" />

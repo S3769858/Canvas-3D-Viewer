@@ -104,13 +104,23 @@ function getRequestedModel() {
   if (url.searchParams.has('idx'))   return { kind:'index', val:url.searchParams.get('idx') };
   if (url.searchParams.has('model')) return { kind:'name',  val:url.searchParams.get('model') };
 
-  /* bare paths like /tiger or /car.obj */
+    /* bare paths – handles /bear, /view/bear, /view/model=bear, /view/idx=2 */
     const path = url.pathname.replace(/^\/+|\/+$/g,'');   
     if (path && path !== 'index.html') {
-        const parts = path.split('/');                    // 'view','bear'
-        const last  = parts[parts.length - 1];            // 'bear'
-        const base  = last.split('.')[0];                 // drop .obj / .html
-        return { kind:'name', val: base };
+
+        const parts = path.split('/');                    // 'view','model=bear'
+        let last     = parts[parts.length - 1];           // 'model=bear'
+
+        /* allow 'model=bear' or 'idx=3' in the path */
+        if (last.startsWith('model=')) {
+            return { kind:'name',  val: last.slice(6) };  // after 'model='
+        }
+        if (last.startsWith('idx=')) {
+            return { kind:'index', val: parseInt(last.slice(4),10) };
+        }
+
+        /* plain bare file name, e.g. 'bear.obj' -> 'bear' */
+        return { kind:'name', val: last.split('.')[0] };
     }
   return null;
 }

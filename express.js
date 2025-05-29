@@ -52,6 +52,13 @@ app.post('/submit/:modelName/:url', (req, res) => {
   res.render(__dirname + '/submit.html', { modelName: modelName, return_url: url })
 })
 
+app.get('/submit/:modelName/:url', (req, res) => {
+  const { modelName, url } = req.params;
+  res.render(__dirname + '/submit.html',
+             { modelName, return_url: url });
+});
+
+
 var httpServer = http.createServer(app);
 var httpsServer = https.createServer({
   key: fs.readFileSync('server.key'), // Parameter is your signed certificate key

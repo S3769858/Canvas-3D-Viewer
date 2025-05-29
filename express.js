@@ -19,6 +19,18 @@ app.post('/view/:modelName', (req, res) => {
   res.render(__dirname + '/index.html', { modelName: modelName })
 })
 
+
+app.get('/view/:modelName', (req, res) => {
+  const modelName = req.params.modelName;
+  res.render(__dirname + '/index.html', { modelName });
+});
+
+
+app.get('/embed', (req, res) => {
+  const url = req.query.ext_content_return_url || '';
+  res.render(__dirname + '/select.html', { return_url: url });
+});
+
 app.post('/embed', (req, res) => {
   const url = req.body.ext_content_return_url;
   res.render(__dirname + '/select.html', { return_url: url });

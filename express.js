@@ -34,7 +34,7 @@ app.get('/models', (req, res) => {
 
 app.all('/submit/:modelName', (req, res) => {
   const name = req.params.modelName.replace(/\.[^/.]+$/, '').toLowerCase();
-  res.render('/submit.html', { modelName: name });
+  res.render(__dirname + '/submit.html', { modelName: name });
 });
 
 

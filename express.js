@@ -13,25 +13,12 @@ app.use(express.urlencoded({extended: true}))
 
 app.engine('html', require('ejs').renderFile);
 
-app.post('/view/:modelName', (req, res) => {
+app.all('/view/:modelName', (req, res) => {
   const modelName = req.params.modelName;
-  console.log("view:" + modelName);
   res.render(__dirname + '/index.html', { modelName: modelName })
 })
 
-
-app.get('/view/:modelName', (req, res) => {
-  const modelName = req.params.modelName;
-  res.render(__dirname + '/index.html', { modelName });
-});
-
-
-app.get('/embed', (req, res) => {
-  const url = req.query.ext_content_return_url || '';
-  res.render(__dirname + '/select.html', { return_url: url });
-});
-
-app.post('/embed', (req, res) => {
+app.all('/embed', (req, res) => {
   const url = req.body.ext_content_return_url;
   res.render(__dirname + '/select.html', { return_url: url });
 })
@@ -44,19 +31,6 @@ app.get('/models', (req, res) => {
   const models = fs.readdirSync('./sample_models');
   res.send(models);
 })
-
-app.post('/submit/:modelName/:url', (req, res) => {
-  const modelName = req.params.modelName;
-  const url = req.params.url;
-  console.log("submit:" + modelName);
-  res.render(__dirname + '/submit.html', { modelName: modelName, return_url: url })
-})
-
-app.get('/submit/:modelName/:url', (req, res) => {
-  const { modelName, url } = req.params;
-  res.render(__dirname + '/submit.html',
-             { modelName, return_url: url });
-});
 
 app.all('/submit/:modelName', (req, res) => {
   const name = req.params.modelName.replace(/\.[^/.]+$/, '').toLowerCase();

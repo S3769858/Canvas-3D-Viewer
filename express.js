@@ -19,9 +19,11 @@ app.all('/view/:modelName', (req, res) => {
 })
 
 app.all('/embed', (req, res) => {
-  const url = req.body.ext_content_return_url;
+  const url =
+        (req.method === 'POST' ? (req.body && req.body.ext_content_return_url)
+                               : req.query.ext_content_return_url) || '';
   res.render(__dirname + '/select.html', { return_url: url });
-})
+});
 
 app.get('/xml', (req, res) => {
   res.render(__dirname + "/info.xml");

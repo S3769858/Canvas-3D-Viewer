@@ -95,6 +95,15 @@ var materials = {
 var clock = new THREE.Clock();
 var winDims = [window.innerWidth * 0.8, window.innerHeight * 0.89]; //size of renderer
 
+/* turn “Dinosaur_V02.obj” into “dinosaur_v02”  */
+function norm(str){
+  return str
+      .toLowerCase()          
+      .replace(/\.[^/.]+$/, '')   
+      .replace(/[^a-z0-9]+/g, '_') 
+      .replace(/^_+|_+$/g,'');    
+}
+
 /* ───────── URL → sample-index helper ───────── */
 
 function getRequestedModel() {
@@ -128,12 +137,20 @@ function getRequestedModel() {
 function findModelIndex(req){
   if(!req) return -1;
 
-  /* numeric idx passed? */
+  /* numeric index? */
   if(req.kind === 'index' && /^\d+$/.test(req.val)){
       const n = +req.val;
       return (n>=0 && n < modelList.length) ? n : -1;
   }
 
+  /* compare normalised strings */
+  const canon = norm(req.val);
+  return modelList.findIndex(m =>
+      canon === norm(m.id   || '') ||
+      canon === norm(m.name || '') ||
+      canon === norm( (m.url||'').split('/').pop() )   // filename
+  );
+}
   /* match id **or** filename stem */
   const canon = req.val.toLowerCase();
   return modelList.findIndex(m=>
@@ -641,14 +658,34 @@ function animate() {
     render();
 
 }
-var modelList = [
-    { id:"crash",    name:"Crash Model",    url:"sample_models/crash2.obj"         },
-    { id:"bear",     name:"Bear Model",     url:"sample_models/bear-obj.obj"       },
-    { id:"car",      name:"Car Model",      url:"sample_models/car2.obj"           },
-    { id:"tiger",    name:"Tiger Model",    url:"sample_models/Tiger.obj"          },
-    { id:"dinosaur", name:"Dinosaur Model", url:"sample_models/Dinosaur_V02.obj"   },
-    { id:"skeleton", name:"Skeleton Model", url:"sample_models/skeleton.obj"       }
-];
+
+/* -----------------------------------------------------------
+   Build modelList at runtime from the /models endpoint
+-------------------------------------------------------------*/
+let modelList = [];          // will be filled once fetch returns
+
+function titleCase(str){
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+fetch('/models')
+  .then(r => r.json())
+  .then(files => {
+      modelList = files.map(f=>{
+          const stem = f.replace(/\.[^/.]+$/,'');      // "Tiger.obj" -> "Tiger"
+          const id   = stem.toLowerCase();             // tiger
+          return {
+              id,
+              name : `${titleCase(id)} Model`,         // "Tiger Model"
+              url  : `sample_models/${f}`
+          };
+      });
+
+      onload();
+  })
+  .catch(err => {
+      console.error('Could not load /models list', err); //fallback
+  });
 
 function switchScene(index) {
 
@@ -679,7 +716,7 @@ function clear() {
     }
 }
 
-onload();
+
 
 
 document.querySelectorAll('#top_nav .dropdown > a').forEach(a=>{

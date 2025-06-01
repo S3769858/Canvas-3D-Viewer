@@ -151,14 +151,7 @@ function findModelIndex(req){
       canon === norm( (m.url||'').split('/').pop() )   // filename
   );
 }
-  /* match id **or** filename stem */
-  const canon = req.val.toLowerCase();
-  return modelList.findIndex(m=>
-          (m.id   && m.id.toLowerCase()   === canon) ||
-          (m.name && m.name.toLowerCase() === canon) ||
-          (m.name && m.name.split('.')[0].toLowerCase() === canon)
-  );
-}
+
 
 
 function onload() {

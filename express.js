@@ -36,8 +36,17 @@ app.get('/models', (req, res) => {
 
 app.all('/submit/:modelName', (req, res) => {
   const name = req.params.modelName.replace(/\.[^/.]+$/, '').toLowerCase();
-  res.render(__dirname + '/submit.html', { modelName: name });
+
+  // • FOR LOCAL TESTING •
+  // skip the Canvas hand-off and go straight to the viewer ⬇︎
+  return res.redirect('/view/' + name);
+
+  // ─────────────────────────────────────────────────────────
+  // When you’re ready to push back to Canvas, comment the
+  // redirect above and restore the original line below:
+  // res.render(__dirname + '/submit.html', { modelName: name });
 });
+
 
 
 var httpServer = http.createServer(app);
